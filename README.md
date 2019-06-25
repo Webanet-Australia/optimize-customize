@@ -1,7 +1,7 @@
 # optimize-customize
 OptimizePress custom membership forms plugin
 
-Installation
+Installation:
 
 1. Clone or download the repo
 2. Upload the plugin to a new  directory `/wp-content/plugins/optimizeCustomize`
