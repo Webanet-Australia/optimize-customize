@@ -19,7 +19,7 @@
   <tbody>
     <tr class="form-field form-required">
       <th scope="row">
-        <label for="shortcodes">EG Usage:</label>
+        <label for="shortcodes">Example Usage</label>
       </th>
       <td>
         <b>[optimize_customize level="1" currency="USD" plan="Payment Provider's Plan Name"/]</b><br/>
