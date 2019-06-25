@@ -1,6 +1,8 @@
 # optimize-customize
 OptimizePress custom membership forms plugin
 
+---
+
 Installation:
 
 1. Clone or download the repo
