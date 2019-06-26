@@ -22,4 +22,4 @@ Plan name, as setup on your payment gateways dashboard.
 
 Admin Screenshot
 
-![alt text](https://github.com/Webanet-Australia/optimize-customize/blob/master/assets/img/admin-screenshot.png)
+![Admin screenshot image](https://raw.githubusercontent.com/Webanet-Australia/optimize-customize/master/assets/img/admin-screenshot.jpg)
