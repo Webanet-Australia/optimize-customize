@@ -12,11 +12,11 @@ Installation:
 5. Use the shortcode on your post/page:
 
 ```php
-[optimize_customize level="1" currency="USD" plan="Payment Provider's Plan Name"/]
+[optimize_customize level="1" currency="USD" plan="plan_FKFrxujl5vE8Xq"/]
 ````
 
 Level is an OptimizePress Membership level, where Bronze is one, etc.
-Plan name, as setup on your payment gateways dashboard.
+Plan ID, as setup on your payment gateways dashboard.
 
 ---
 
