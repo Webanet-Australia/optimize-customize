@@ -1,5 +1,20 @@
 {
-    "require": {
-        "stripe/stripe-php": "^6.39"
-    }
+  "name": "OptimizeCustomize",
+  "description": "Custom membership forms for OptimizeMember",
+  "keywords": ["Custom forms, OptimizeMember, OptimizePress"],
+  "homepage": "https://github.com/Webanet-Australia/optimize-customize",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+      {
+          "name": "zak",
+          "email": "zak@webanet.com.au"
+      }
+  ],
+
+  "require": {
+      "stripe/stripe-php": "^6.39"
+  }
+
 }

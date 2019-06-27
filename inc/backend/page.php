@@ -38,8 +38,6 @@
       matchBrackets: true,
       mode: "htmlmixed"
     });
-
     cm.setSize('100%', '260px');
-
   });
 </script>

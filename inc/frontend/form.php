@@ -1,8 +1,29 @@
 <?php
-echo '<script src="https://js.stripe.com/v3/"></script>';
-//shortcode param type
-print_r($atts);
-$opmCustomize = new OptimizeCustomize();
-echo $opmCustomize->getSettingsCode();
 
-echo '<p>version:' . OptimizeCustomize::VERSION . '</p>';
+//stripe elements api
+if (OptimizeCustomize::getPaymentProvider() == 'stripe') {
+  print '<script src="https://js.stripe.com/v3/"></script>';
+}
+
+//the signup form
+print OptimizeCustomize::getSignupForm();
+
+//js object shortcode atts for form inputs
+print '<script>var optimizeCustomizeAtts = ' . json_encode($atts) . '</script>';
+
+?>
+
+<script>
+
+    jQuery(document).ready(function($) {
+
+      //loop shortcodes object
+      $.each(optimizeCustomizeAtts, function (key, value) {
+
+        //add shortcode atts as hidden input controls to aform
+        $('form').append('<input type="hidden" name="' + key + '" value="' + value + '" />');
+
+      });
+
+  });
+</script>

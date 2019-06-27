@@ -1,181 +1,309 @@
 <?php
 /*
   Plugin name: OptimizeCustomize
-  Plugin URI: https://github.com/s-n-i-p-e-r/
-  Description: Custom membership forms for OptimizeMember
-  Version: 1.0.0
-  Author: sniper@openmail.cc
-  Author URI: https://github.com/s-n-i-p-e-r/
-  Text Domain: optimizecustomize
-  Domain Path: /lang/
-  License: GPL
+  Plugin URI:   https://github.com/Webanet-Australia/optimize-customize
+  Description:  Custom membership forms for OptimizeMember
+  Version:      1.0.0
+  Author:       sniper@openmail.cc
+  Author URI:   https://github.com/orgs/Webanet-Australia/
+  Text Domain:  optimize-customize
+  Domain Path:  /lang/
+  License:      GPL
 */
+use Stripe\Stripe;
+use Stripe\Customer;
+use Stripe\Subscription;
 
+//require dependencies
+require_once(__DIR__ . '/vendor/autoload.php');
+
+//ensure page is included
 defined( 'ABSPATH' ) or die;
 
 if(!class_exists('OptimizeCustomize')) {
 
     class OptimizeCustomize
     {
+        //plugin directory name
         const PLUGIN_DIR = '/optimizeCustomize';
 
+        //plugin version
         const VERSION = '1.0.0';
 
-        function __construct()
+        //plugin text domain
+        const TEXT_DOMAIN = 'optimize-customize';
+
+        //enqueue admin scripts
+        public function init()
         {
+            add_action( 'admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
 
-          //enqueue admin scripts
-          add_action( 'admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
+            //menu in admin
+            add_action('admin_menu', [$this, 'adminMenu']);
 
-          //menu in admin
-          add_action('admin_menu', [$this, 'adminMenu']);
+            //shortcodes
+            add_shortcode('optimize_customize', [$this, 'shortcodes']);
 
-          //Shortcodes
-          add_shortcode('optimize_customize', [$this, 'shortcodes']);
+            //admin init settings
+            add_action('admin_init', [$this, 'adminInit']);
 
-          //admin init settings
-          add_action('admin_init', [$this, 'adminInit']);
-
-          /*$this->maps_settings = get_option( 'maps_settings' );
-          //print_r($this->maps_settings);
-          register_activation_hook(__FILE__, array($this, 'maps_load_default_settings') ); //loads default settings for the plugin while activating the plugin
-          //add_action( 'init', array($this, 'maps_session_init') ); //starts the session
-
-          //add_action( 'admin_post_maps_markers_action', array($this, 'maps_markers_save'));
-          //add_action('template_redirect', array($this, 'maps_markers_save'));
-          //  add_action( 'admin_post_maps_restore_default', array($this, 'apif_restore_default') ); //restores default settings;
-
-
-          add_action('rest_api_init', function () {
-            register_rest_route( '/maps/postcode', '/position', [
-              'methods' => 'GET',
-              'callback' => array($this, 'getPostcodePosition')
-            ]);
-          });
-
-
-
-          add_action( 'rest_api_init', function () {
-            register_rest_route( '/maps', '/markers', [
-              'methods' => 'POST',
-              'callback' => array($this, 'addMapMarker')
-            ]);
-          });
-
-          add_action( 'rest_api_init', function () {
-            register_rest_route( '/maps', '/markers', [
-              'methods' => 'DELETE',
-              'callback' => array($this, 'removeMapMarker')
-            ]);
-          });
-
-          add_action( 'rest_api_init', function () {
-            register_rest_route( '/maps', '/markers/location', [
-              'methods' => 'GET',
-              'callback' => array($this, 'getLocation')
-            ]);
-          });
-          */
+            //Frontend form submit
+            add_action('rest_api_init', function () {
+              register_rest_route( '/' . self::TEXT_DOMAIN, '/signup', [
+                'methods' => 'POST',
+                'callback' => [$this, 'signup']
+              ]);
+            });
         }
 
-
-        // Admin Settings options section
-        function adminSettingsSection()
+        //show admin page, include backend page
+        function adminPage()
         {
-          print '<h1 class="title">
-            <img src="' . plugins_url() . OptimizeCustomize::PLUGIN_DIR . '/assets/img/icon.png" title="logo" class="logo">
-            Optimize Customize
-          </h1>
-          <h2>OptimizePress custom membership forms</h2>
-          <hr/>';
-        }
-
-        //Admin settings key field
-        function adminSettingsKey()
-        {
-            print '<input type="text" name="optimize_customize_setting_key" id="optimize_customize_api_key" value="' . get_option('optimize_customize_setting_key') . '"><br/>
-              <a href="' . admin_url() . '/admin.php?page=ws-plugin--optimizemember-scripting" target="_blank">Get Optimize Remote API Key.</a><br/>
-              <i>Scroll down to the "Pro API For Remote Operations" section and retrieve the value from the "Remote Operations API: Your secret API Key" textbox, paste that value in the textbox above.</i>';
-        }
-
-        //Admin settings code field
-        function adminSettingsCode()
-        {
-            print '<textarea name="optimize_customize_setting_code" id="optimize-customize-code-editor">' . get_option('optimize_customize_setting_code') . '</textarea>';
-        }
-
-        function getSettingsCode()
-        {
-          return  get_option('optimize_customize_setting_code');
-        }
-
-        function adminSettingsPayments()
-        {
-          print '
-          <select name="optimize_customize_settting_payments">
-              <option value="1">Stripe</option>
-          </select>';
-        }
-
-        //Admin Initialize settings fields
-        function adminInit()
-        {
-            // Add section
-           	add_settings_section(
-          		'optimize_customize_section',
-          		'',
-          		[$this, 'adminSettingsSection'],
-          		'optimize-customize'
-          	);
-
-           	//API Key - Add setting field
-           	add_settings_field(
-          		'optimize_customize_setting_key',
-          		'OpimizePress API Key',
-          		[$this, 'adminSettingsKey'],
-          		'optimize-customize',
-          		'optimize_customize_section'
-          	);
-           	//API Key - Register
-            register_setting('optimize-customize', 'optimize_customize_setting_key');
-
-            //Payments - Add setting field
-            add_settings_field(
-              'optimize_customize_setting_payments',
-              'Payment Provider',
-              [$this, 'adminSettingsPayments'],
-              'optimize-customize',
-              'optimize_customize_section'
-            );
-            //Payments - Register
-            register_setting('optimize-customize', 'optimize_customize_setting_payments');
-
-            //Form Code - Add setting field
-            add_settings_field(
-              'optimize_customize_setting_code',
-              'Signup Form',
-              [$this, 'adminSettingsCode'],
-              'optimize-customize',
-              'optimize_customize_section'
-            );
-            //Form Code - Register
-            register_setting('optimize-customize', 'optimize_customize_setting_code');
-
-
+            include( 'inc/backend/page.php' );
         }
 
         //Add Admin Menu Item
         function adminMenu()
         {
-            add_menu_page(__('OPMCustomize', 'optimize-customize' ), __( 'OPMCustomize', 'optimize-customize'), 'manage_options', 'optimize-customize', array($this, 'adminPage'), plugins_url() . self::PLUGIN_DIR . '/assets/img/icon.png' );
-
+            add_menu_page(
+              __('OPMCustomize', self::TEXT_DOMAIN ),
+              __( 'OPMCustomize', self::TEXT_DOMAIN),
+              'manage_options',
+              self::TEXT_DOMAIN,
+              [$this, 'adminPage'],
+              plugins_url() . self::PLUGIN_DIR . '/assets/img/icon.png'
+            );
         }
 
-        //show plugins admin page
-        function adminPage()
+        //Signup form submit
+        public function signup()
         {
-            include( 'inc/backend/page.php' );
+            $payment = self::payment($_POST);
 
+            if($payment['result'] !== true) {
+              return $payment;
+            }
+
+            return array_merge([
+              'payment' => $payment,
+              'addUser' => self::addUser($_POST)
+            ], $_POST);
+        }
+
+        public static function payment($post)
+        {
+            $rv = [];
+
+            Stripe::setApiKey(get_option('optimize_customize_setting_payment_key'));
+
+            try
+            {
+              $customer = Customer::create([
+                'email' => $post['stripeEmail'],
+                'source'  => $post['stripeToken'],
+              ]);
+
+              $subscription = Subscription::create([
+                'customer' => $customer->id,
+                'items' => [['plan' => $post['plan']]],
+              ]);
+
+              if ($subscription->status != 'incomplete') {
+
+                $rv['result'] = true;
+
+              } else {
+
+                $rv['result'] = 'Payment failed';
+
+              }
+
+            } catch(Exception $e) {
+
+              $rv['result'] = 'Error: ' . $e->getMessage();
+            }
+
+            return $rv;
+        }
+
+        public static function addUser($post)
+        {
+            $rv = [];
+            $op = [];
+
+            //operation.
+            $op["op"] = "create_user";
+
+            //OptimizePress member api key
+            $op["api_key"] = get_option('optimize_customize_setting_key');
+
+            //user data
+            $op["data"] = [
+                "user_login" => "johndoe22",
+                "user_email" => "johndoe22@example.com",
+                "modify_if_login_exists" => "1",
+                //"user_pass" => "456DkaIjsd!", // Optional. Plain text Password. If empty, this will be auto-generated.
+                "first_name" => "John",
+                "last_name" => "Doe",
+                "optimizemember_level" => "2",
+                "optimizemember_subscr_gateway" => "paypal",
+                "optimizemember_subscr_id" => "I-DJASODJF8933J",
+                //"custom_fields" => array ("my_field_id" => "Some value."), // Optional. An array of Custom Registration/Profile Field ID's, with associative values
+                "opt_in" => "1",
+                "notification" => "1",
+            ];
+
+            $post_data = stream_context_create (array ("http" => array ("method" => "POST", "header" => "Content-type: application/x-www-form-urlencoded", "content" => "optimizemember_pro_remote_op=" . urlencode (serialize ($op)))));
+
+            $result = trim (file_get_contents (site_url() . "/?optimizemember_pro_remote_op=1", false, $post_data));
+
+            return $result;
+        }
+
+        //Shortcode
+        function shortcodes($atts)
+        {
+          //define shortcode atts
+          $atts = shortcode_atts(['level' => '1', 'currency' => '', 'plan' => '0'], $atts, 'optimize_customize');
+
+          //start page output
+          ob_start();
+
+          //include frontend page
+          include( __DIR__ . '/inc/frontend/form.php');
+
+          //get page output
+          $html = ob_get_contents();
+
+          //cleanup
+          ob_get_clean();
+
+          //return page output
+          return $html;
+        }
+
+        //Admin Initialize settings fields
+        function adminInit()
+        {
+            // add section
+           	add_settings_section(
+          		'optimize_customize_section',
+          		'',
+          		[$this, 'adminSettingsSection'],
+          		self::TEXT_DOMAIN
+          	);
+
+           	//api key - Add setting field
+           	add_settings_field(
+          		'optimize_customize_setting_key',
+          		'OpimizePress API Key',
+          		[$this, 'adminSettingsKey'],
+          		self::TEXT_DOMAIN,
+          		'optimize_customize_section'
+          	);
+
+           	//api key - register
+            register_setting(self::TEXT_DOMAIN, 'optimize_customize_setting_key');
+
+            //payments - Add setting field
+            add_settings_field(
+              'optimize_customize_setting_payments',
+              'Payment Provider',
+              [$this, 'adminSettingsPayments'],
+              self::TEXT_DOMAIN,
+              'optimize_customize_section'
+            );
+
+            //payments - register
+            register_setting(self::TEXT_DOMAIN, 'optimize_customize_setting_payments');
+
+            //payment gateway api key - Add setting field
+            add_settings_field(
+              'optimize_customize_setting_payment_key',
+              'Payment Gateway API Key',
+              [$this, 'adminSettingsPaymentKey'],
+              self::TEXT_DOMAIN,
+              'optimize_customize_section'
+            );
+
+            //payment gateway api key
+            register_setting(self::TEXT_DOMAIN, 'optimize_customize_setting_payment_key');
+
+            //form code - add setting field
+            add_settings_field(
+              'optimize_customize_setting_code',
+              'Signup Form',
+              [$this, 'adminSettingsCode'],
+              self::TEXT_DOMAIN,
+              'optimize_customize_section'
+            );
+
+            //form code - register
+            register_setting(self::TEXT_DOMAIN, 'optimize_customize_setting_code');
+        }
+
+        //admin settings options section heading
+        function adminSettingsSection()
+        {
+            print '<h1 class="title">
+              <img src="' . plugins_url() . OptimizeCustomize::PLUGIN_DIR . '/assets/img/icon.png" title="logo" class="logo">
+              Optimize Customize
+            </h1>
+            <h2>OptimizePress custom membership forms</h2>
+            <hr/>';
+          }
+
+        //admin settings key field
+        function adminSettingsKey()
+        {
+            print '
+            <input type="text" name="optimize_customize_setting_key"
+              id="optimize_customize_api_key"
+              value="' . get_option('optimize_customize_setting_key') . '"><br/>
+            <a href="' . admin_url() . '/admin.php?page=ws-plugin--optimizemember-scripting"
+              target="_blank">Get Optimize Remote API Key.</a><br/>
+            <i>Scroll down to the "Pro API For Remote Operations" section and retrieve the value from the <br/>
+            "Remote Operations API: Your secret API Key" textbox, paste that value in the textbox above.</i>';
+        }
+
+        //admin settings payment gateway key field
+        function adminSettingsPaymentKey()
+        {
+            print '
+            <input type="text" name="optimize_customize_setting_payment_key"
+              id="optimize_customize_payment_key"
+              value="' . get_option('optimize_customize_setting_payment_key') . '">';
+        }
+
+        //admin settings signup form field
+        public function adminSettingsCode()
+        {
+            print '
+            <textarea name="optimize_customize_setting_code" id="' .
+              self::TEXT_DOMAIN . '-code-editor">' .
+              self::getSignupForm() .
+            '</textarea>';
+        }
+
+        //get signup form code value
+        public static function getSignupForm()
+        {
+            return get_option('optimize_customize_setting_code');
+        }
+
+        //Admin settings payment provider select options
+        function adminSettingsPayments()
+        {
+            print '
+            <select name="optimize_customize_setting_payments">
+                <option value="1">Stripe</option>
+            </select>';
+        }
+
+        //Get admin setting payment provider (always stripe for now)
+        public static function getPaymentProvider()
+        {
+            return 'stripe';
         }
 
         //enqueue scripts for admin page
@@ -183,210 +311,63 @@ if(!class_exists('OptimizeCustomize')) {
         {
           $url = plugins_url() . self::PLUGIN_DIR ;
 
-          wp_enqueue_style('optimize-customize-cm-style', $url . '/assets/vendor/codemirror/css/codemirror.css', [], self::VERSION);
+          //codemirror css
+          wp_enqueue_style(
+            self::TEXT_DOMAIN . '-cm-style',
+            $url . '/assets/vendor/codemirror/css/codemirror.css',
+            [],
+            self::VERSION
+          );
 
-          wp_enqueue_script('optimize-customize-cm', $url . '/assets/vendor/codemirror/js/codemirror.js', ['jquery'], self::VERSION, true);
-          wp_enqueue_script('optimize-customize-cm-xml', $url . '/assets/vendor/codemirror/js/xml.js', ['jquery'], self::VERSION, true);
-          wp_enqueue_script('optimize-customize-cm-javascript', $url . '/assets/vendor/codemirror/js/javascript.js', ['jquery'], self::VERSION, true);
-          wp_enqueue_script('optimize-customize-cm-css', $url . '/assets/vendor/codemirror/js/css.js', ['jquery'], self::VERSION, true);
-          wp_enqueue_script('optimize-customize-cm-htmlmixed', $url . '/assets/vendor/codemirror/js/htmlmixed.js', ['jquery'], self::VERSION, true);
+          //codemirror js
+          wp_enqueue_script(
+            self::TEXT_DOMAIN . '-cm',
+            $url . '/assets/vendor/codemirror/js/codemirror.js',
+            ['jquery'],
+            self::VERSION,
+            true
+          );
 
+          //codemirror xml mode
+          wp_enqueue_script(
+            self::TEXT_DOMAIN . '-cm-xml',
+            $url . '/assets/vendor/codemirror/js/xml.js',
+            ['jquery'],
+            self::VERSION,
+            true
+          );
+
+          //codemirror javascript mode
+          wp_enqueue_script(
+            self::TEXT_DOMAIN . '-cm-javascript',
+            $url . '/assets/vendor/codemirror/js/javascript.js',
+            ['jquery'],
+            self::VERSION,
+            true
+          );
+
+          //codemirror css mode
+          wp_enqueue_script(
+            self::TEXT_DOMAIN . '-cm-css',
+            $url . '/assets/vendor/codemirror/js/css.js',
+            ['jquery'],
+            self::VERSION,
+            true
+          );
+
+          //codemirror html mixed mode
+          wp_enqueue_script(
+            self::TEXT_DOMAIN . '-cm-htmlmixed',
+            $url . '/assets/vendor/codemirror/js/htmlmixed.js',
+            ['jquery'],
+            self::VERSION,
+            true
+          );
         }
-
-        function formSubmit()
-        {
-          \Stripe\Stripe::setApiKey('sk_test_0cnexLEtK2hISIrYazN3xn7g00YZWtMRZU');
-
-          try
-          {
-            $customer = \Stripe\Customer::create([
-              'email' => $_POST['stripeEmail'],
-              'source'  => $_POST['stripeToken'],
-            ]);
-
-            $subscription = \Stripe\Subscription::create([
-              'customer' => $customer->id,
-              'items' => [['plan' => 'weekly_box']],
-            ]);
-
-            if ($subscription->status != 'incomplete')
-            {
-              //header('Location: thankyou.html');
-            }
-            else
-            {
-              //header('Location: payment_failed.html');
-              //error_log("failed to collect initial payment for subscription");
-            }
-            exit;
-          }
-          catch(Exception $e)
-          {
-            //header('Location:oops.html');
-            //error_log("unable to sign up customer:" . $_POST['stripeEmail'].
-            //  ", error:" . $e->getMessage());
-          }
-
-        }
-
-        //Shortcodes
-        function shortcodes($atts)
-        {
-          $atts = shortcode_atts(['level' => '1', 'currency' => '', 'plan' => '0'], $atts, 'optimize_customize');
-
-          ob_start();
-
-          include( __DIR__ . '/inc/frontend/form.php');
-
-          $html = ob_get_contents();
-          ob_get_clean();
-
-          return $html;
-        }
-        /*
-         * Plugin Translation
-
-        function maps_plugin_text_domain() {
-          // /  load_plugin_textdomain( 'goog-maps-tools', false, basename( dirname( __FILE__ ) ) . '/languages/' );
-        }
-        */
-        /**
-         * Load Default Settings
-         *
-         */
-        /*function maps_load_default_settings() {
-          if( !get_option( 'maps_settings' ) ) {
-            $maps_settings = $this->get_maps_default_settings();
-            update_option( 'maps_settings', $maps_settings );
-          }
-        }
-        */
-
-
-
-        /**
-         * Starts the session
-         */
-        /*function maps_session_init() {
-            if( !session_id() && !headers_sent() ) {
-                session_start();
-            }
-        }*/
-
-        /**
-         * Returns Default Settings
-         */
-         /*
-        function get_maps_default_settings()
-        {
-            $maps_settings = [
-              'default_lat' => '',
-              'default_lng' => '',
-              'access_token' => ''
-            ];
-            return $maps_settings;
-        }
-        */
-
-        /**
-          *   Register backend js and css
-        **/
-        /*function maps_register_admin_assets()
-        {
-          if( isset( $_GET['page'] ) && $_GET['page'] == 'goog-maps-tools' ) {
-            wp_enqueue_style('maps-admin-style', MAPS_CSS_DIR . '/admin.css', [], null);
-            wp_enqueue_script('maps-admin-script', MAPS_JS_DIR . '/admin.js', array('jquery'), null);
-          }
-        }
-*/
-  /*      function maps_register_frontend_assets()
-        {
-          wp_enqueue_style('ᘻaps.css', MAPS_CSS_DIR . '/maps.css', ['bootstrap'], null );
-
-          //wp_enqueue_script('goog-maps', "https://maps.google.com/maps/api/js?key=" . self::MAPS_KEY . "&libraries=geometry", null, false);
-          wp_enqueue_script('ᘻaps.js',  MAPS_JS_DIR . '/maps.js', ['jquery', 'goog-maps'], null, true);
-        }
-*/
-        //slider shortcode
-  /*      function maps_do_shortcode($atts)
-        {
-          $atts = shortcode_atts(['type' => ''], $atts, 'ᘻaps' );
-
-          ob_start();
-
-          include( __DIR__ . '/inc/frontend/maps.php' );
-          $html = ob_get_contents();
-          ob_get_clean();
-          return $html;
-        }
-*/
-/*
-        public static function getMapMarkers()
-        {
-          global $wpdb;
-
-          $sql = "SELECT * FROM markers";
-
-          return $wpdb->get_results($sql, ARRAY_A);
-        }
-*/
-
-        /**
-          *
-          *   Get markers
-          *
-        **/
-  /*      function addMapMarker(WP_REST_Request $request)
-        {
-        //  var_dump($_POST);die;
-          $qs = $request->get_query_params();
-
-          $data = [
-            'address' => $_POST['address'],
-            'lat' => $_POST['lat'],
-            'lon' => $_POST['lng'],
-          ];
-
-          global $wpdb;
-
-          $table = 'markers';
-
-          // next line will insert the data
-          $wpdb->insert($table, $data, '%s');
-
-          return (isset($wpdb->insert_id)) ? $wpdb->insert_id : -1;
-        }
-/*
-        /**
-          *   Remove Map Marker
-          *
-          *
-        **/
-  /*      function removeMapMarker(WP_REST_Request $request)
-        {
-        //  var_dump($_POST);die;
-          $qs = $request->get_query_params();
-
-          if (isset($qs['id'])) {
-
-            global $wpdb;
-
-            $table = 'markers';
-
-            // next line will insert the data
-            $wpdb->delete( $table, ['id' => $qs['id']]);
-
-            return true;
-          } else {
-            return false;
-          }
-        }
-*/
-
-
     }
 
-    $opmCustomize = new OptimizeCustomize(); //initialization of plugin
-
+    //create plugin
+    $opmCustomize = new OptimizeCustomize();
+    $opmCustomize->init();
 }
 ?>
