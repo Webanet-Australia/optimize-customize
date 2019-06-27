@@ -1,0 +1,245 @@
+<style>
+
+  .StripeElement {
+    box-sizing: border-box;
+
+    height: 40px;
+
+    padding: 10px 12px;
+
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+
+  .StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+  }
+
+  .StripeElement--invalid {
+    border-color: #fa755a;
+  }
+
+  .StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .text {
+    font-size: 32px;
+    color: #ffffff;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: bold;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 {
+    padding: 17px 51px;
+    border-color: #000000;
+    border-width: 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    background: #e54234;
+    box-shadow: none;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .gradient {
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .shine {
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .active {
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .hover {
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+  }
+</style>
+<form action="/wp-json/optimize-customize/signup" method="post" id="optimize-customize-payment-form">
+
+  <div id="optimizemember-pro-stripe-checkout-form-description-section" class="optimizemember-pro-stripe-form-section optimizemember-pro-stripe-checkout-form-section optimizemember-pro-stripe-form-description-section optimizemember-pro-stripe-checkout-form-description-section"
+    style="display: block;">
+    <div id="optimizemember-pro-stripe-checkout-form-description-div" class="optimizemember-pro-stripe-form-div optimizemember-pro-stripe-checkout-form-div optimizemember-pro-stripe-form-description-div optimizemember-pro-stripe-checkout-form-description-div">
+      9.97 a month. Cancel Anytime. 30 Money Back Gurantee.
+    </div>
+    <div style="clear:both;"></div>
+  </div>
+
+  <div id="optimizemember-pro-stripe-checkout-form-registration-section" class="optimizemember-pro-stripe-form-section optimizemember-pro-stripe-checkout-form-section optimizemember-pro-stripe-form-registration-section optimizemember-pro-stripe-checkout-form-registration-section">
+    <div id="optimizemember-pro-stripe-checkout-form-registration-section-title" class="optimizemember-pro-stripe-form-section-title optimizemember-pro-stripe-checkout-form-section-title optimizemember-pro-stripe-form-registration-section-title optimizemember-pro-stripe-checkout-form-registration-section-title">Your
+      Profile</div>
+    <div id="optimizemember-pro-stripe-checkout-form-first-name-div" class="optimizemember-pro-stripe-form-div optimizemember-pro-stripe-checkout-form-div optimizemember-pro-stripe-form-first-name-div optimizemember-pro-stripe-checkout-form-first-name-div">
+      <label for="optimizemember-pro-stripe-checkout-first-name" id="optimizemember-pro-stripe-checkout-form-first-name-label" class="optimizemember-pro-stripe-form-first-name-label optimizemember-pro-stripe-checkout-form-first-name-label">
+        <span>First Name *</span><br>
+        <input type="text" aria-required="true" maxlength="50" autocomplete="off" name="optimizemember_pro_stripe_checkout[first_name]" id="optimizemember-pro-stripe-checkout-first-name" class="optimizemember-pro-stripe-first-name optimizemember-pro-stripe-checkout-first-name form-control"
+          value="" tabindex="10">
+      </label>
+    </div>
+    <div id="optimizemember-pro-stripe-checkout-form-last-name-div" class="optimizemember-pro-stripe-form-div optimizemember-pro-stripe-checkout-form-div optimizemember-pro-stripe-form-last-name-div optimizemember-pro-stripe-checkout-form-last-name-div">
+      <label for="optimizemember-pro-stripe-checkout-last-name" id="optimizemember-pro-stripe-checkout-form-last-name-label" class="optimizemember-pro-stripe-form-last-name-label optimizemember-pro-stripe-checkout-form-last-name-label">
+        <span>Last Name *</span><br>
+        <input type="text" aria-required="true" maxlength="50" autocomplete="off" name="optimizemember_pro_stripe_checkout[last_name]" id="optimizemember-pro-stripe-checkout-last-name" class="optimizemember-pro-stripe-last-name optimizemember-pro-stripe-checkout-last-name form-control"
+          value="" tabindex="20">
+      </label>
+    </div>
+    <div id="optimizemember-pro-stripe-checkout-form-email-div" class="optimizemember-pro-stripe-form-div optimizemember-pro-stripe-checkout-form-div optimizemember-pro-stripe-form-email-div optimizemember-pro-stripe-checkout-form-email-div">
+      <label for="optimizemember-pro-stripe-checkout-email" id="optimizemember-pro-stripe-checkout-form-email-label" class="optimizemember-pro-stripe-form-email-label optimizemember-pro-stripe-checkout-form-email-label">
+        <span>Email Address *</span><br>
+        <input type="email" aria-required="false" data-expected="email" maxlength="100" autocomplete="off" name="optimizemember_pro_stripe_checkout[email]" id="optimizemember-pro-stripe-checkout-email" class="optimizemember-pro-stripe-email optimizemember-pro-stripe-checkout-email form-control"
+          value="" tabindex="30" readonly="readonly">
+      </label>
+    </div>
+    <div id="optimizemember-pro-stripe-checkout-form-username-div" class="optimizemember-pro-stripe-form-div optimizemember-pro-stripe-checkout-form-div optimizemember-pro-stripe-form-username-div optimizemember-pro-stripe-checkout-form-username-div">
+      <label for="optimizemember-pro-stripe-checkout-username" id="optimizemember-pro-stripe-checkout-form-username-label" class="optimizemember-pro-stripe-form-username-label optimizemember-pro-stripe-checkout-form-username-label">
+        <span>Username (lowercase letters and/or numbers) *</span><br>
+        <input type="text" aria-required="false" maxlength="60" autocomplete="off" name="optimizemember_pro_stripe_checkout[username]" id="optimizemember-pro-stripe-checkout-username" class="optimizemember-pro-stripe-username optimizemember-pro-stripe-checkout-username form-control"
+          value="" tabindex="40" readonly="readonly">
+      </label>
+    </div>
+    <div id="optimizemember-pro-stripe-checkout-form-password-div" class="optimizemember-pro-stripe-form-div optimizemember-pro-stripe-checkout-form-div optimizemember-pro-stripe-form-password-div optimizemember-pro-stripe-checkout-form-password-div password-toggler-button-parent"
+      style="display: none;">
+      <label for="optimizemember-pro-stripe-checkout-password1" id="optimizemember-pro-stripe-checkout-form-password-label" class="optimizemember-pro-stripe-form-password-label optimizemember-pro-stripe-checkout-form-password-label password-toggler-button-parent">
+        <span>Password (type this twice please) *</span><br>
+        <input type="password" aria-required="false" maxlength="100" autocomplete="off" name="optimizemember_pro_stripe_checkout[password1]" id="optimizemember-pro-stripe-checkout-password1" class="optimizemember-pro-stripe-password1 optimizemember-pro-stripe-checkout-password1 form-control"
+          value="" tabindex="50" readonly="readonly">
+        <div style="height: -8px; width: -8px;" class="password-toggler-button password-toggler-show" title="Show password"></div>
+      </label>
+      <input type="password" maxlength="100" autocomplete="off" name="optimizemember_pro_stripe_checkout[password2]" id="optimizemember-pro-stripe-checkout-password2" class="optimizemember-pro-stripe-password2 optimizemember-pro-stripe-checkout-password2 form-control"
+        value="" tabindex="60" aria-required="false" readonly="readonly">
+      <div id="optimizemember-pro-stripe-checkout-form-password-strength" class="ws-plugin--optimizemember-password-strength optimizemember-pro-stripe-form-password-strength optimizemember-pro-stripe-checkout-form-password-strength"><em>password
+          strength indicator</em></div>
+      <div style="height: -8px; width: -8px;" class="password-toggler-button password-toggler-show" title="Show password"></div>
+    </div>
+    <div style="clear:both;"></div>
+  </div>
+
+
+  <div class="form-row" style="margin-top: 20px">
+    <label for="card-element">
+      Credit or debit card
+    </label>
+    <div id="card-element">
+      <!-- A Stripe Element will be inserted here. -->
+    </div>
+
+    <!-- Used to display form errors. -->
+    <div id="card-errors" role="alert"></div>
+  </div>
+
+  <!-- Checkout Now (this holds the submit button, and also some dynamic hidden input variables). -->
+  <div id="optimizemember-pro-stripe-checkout-form-submission-section" class="optimizemember-pro-stripe-form-section optimizemember-pro-stripe-checkout-form-section optimizemember-pro-stripe-form-submission-section optimizemember-pro-stripe-checkout-form-submission-section">
+    <div id="optimizemember-pro-stripe-checkout-form-submission-section-title" class="optimizemember-pro-stripe-form-section-title optimizemember-pro-stripe-checkout-form-section-title optimizemember-pro-stripe-checkout-form-submission-section-title">
+      Checkout Now </div>
+    <!-- Auto-filled by the s2Member software. Do NOT remove this under any circumstance. -->
+    <div style="text-align:center">
+      <button type="submit" id="btn_1_1f50a400160549c18f56a372ac9275b4" class="css-button style-1"><span class="text">GET ACCESS</span><span class="hover"></span><span class="active"></span></button>
+    </div>
+  </div>
+  <div style="clear:both;"></div>
+
+</form>
+<script>
+  // Create a Stripe client.
+  var stripe = Stripe('pk_test_v1vTsdmctfN5XjxnK6HW8Zf200w7mfAGIP');
+
+  // Create an instance of Elements.
+  var elements = stripe.elements();
+
+  // Custom styling can be passed to options when creating an Element.
+  // (Note that this demo uses a wider set of styles than the guide below.)
+  var style = {
+    base: {
+      color: '#32325d',
+      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      fontSmoothing: 'antialiased',
+      fontSize: '16px',
+      '::placeholder': {
+        color: '#aab7c4'
+      }
+    },
+    invalid: {
+      color: '#fa755a',
+      iconColor: '#fa755a'
+    }
+  };
+
+  // Create an instance of the card Element.
+  var card = elements.create('card', {style: style});
+
+  // Add an instance of the card Element into the `card-element` <div>.
+  card.mount('#card-element');
+
+  // Handle real-time validation errors from the card Element.
+  card.addEventListener('change', function(event) {
+    var displayError = document.getElementById('card-errors');
+    if (event.error) {
+      displayError.textContent = event.error.message;
+    } else {
+      displayError.textContent = '';
+    }
+  });
+
+  // Submit the form with the token ID.
+  function stripeTokenHandler(token) {
+    // Insert the token ID into the form so it gets submitted to the server
+    var form = document.getElementById('optimize-customize-payment-form');
+    var hiddenInput = document.createElement('input');
+    hiddenInput.setAttribute('type', 'hidden');
+    hiddenInput.setAttribute('name', 'stripeToken');
+    hiddenInput.setAttribute('value', token.id);
+    form.appendChild(hiddenInput);
+
+    // Submit the form
+    //form.submit();
+  }
+
+  jQuery(document).ready(function($) {
+
+    $('form').submit(function(e) {
+
+      e.preventDefault();
+
+      $frm = $(this);
+
+      var options = {
+        name: $('#optimizemember-pro-stripe-checkout-first-name').val() + ' ' + $('#optimizemember-pro-stripe-checkout-last-name').val()
+      };
+
+      stripe.createToken(card, options).then(function(result) {
+        if (result.error) {
+          // Inform the user if there was an error.
+          var errorElement = document.getElementById('card-errors');
+          errorElement.textContent = result.error.message;
+        } else {
+          // Send the token to your server.
+          stripeTokenHandler(result.token);
+
+          $.ajax({
+              method: "POST",
+              url: $frm.attr('action'),
+              data: $frm.serialize(),
+              success: function(response) {
+                console.log(response);
+              }
+          });
+        }
+      });
+    });
+  });
+
+</script>
