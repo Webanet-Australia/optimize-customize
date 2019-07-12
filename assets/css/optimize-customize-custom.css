@@ -1,0 +1,68 @@
+.StripeElement {
+    box-sizing: border-box;
+    height: 40px;
+
+    padding: 10px 12px;
+
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+
+  .StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+  }
+
+  .StripeElement--invalid {
+    border-color: #fa755a;
+  }
+
+  .StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .text {
+    font-size: 32px;
+    color: #ffffff;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: bold;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 {
+    padding: 17px 51px;
+    border-color: #000000;
+    border-width: 0px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    background: #e54234;
+    box-shadow: none;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .gradient {
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .shine {
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .active {
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+  }
+
+  #btn_1_1f50a400160549c18f56a372ac9275b4 .hover {
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+  }
