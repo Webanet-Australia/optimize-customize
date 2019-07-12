@@ -49,11 +49,15 @@ if(!class_exists('OptimizeCustomize')) {
 
             //Frontend form submit
             add_action('rest_api_init', function () {
+
               register_rest_route( '/' . self::TEXT_DOMAIN, '/signup', [
                 'methods' => 'POST',
                 'callback' => [$this, 'signup']
               ]);
+
             });
+
+            add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
         }
 
         //show admin page, include backend page
@@ -90,11 +94,13 @@ if(!class_exists('OptimizeCustomize')) {
             ], $_POST);
         }
 
+        //Complete payment
         public static function payment($post)
         {
             $rv = [];
 
             Stripe::setApiKey(get_option('optimize_customize_setting_payment_key'));
+            //Stripe::setVerifySslCerts(false);
 
             try
             {
@@ -126,41 +132,45 @@ if(!class_exists('OptimizeCustomize')) {
             return $rv;
         }
 
+        //add user to optimizePress
         public static function addUser($post)
         {
             $rv = [];
             $op = [];
 
-            //operation.
             $op["op"] = "create_user";
 
-            //OptimizePress member api key
             $op["api_key"] = get_option('optimize_customize_setting_key');
 
-            //user data
-            $op["data"] = [
-                "user_login" => "johndoe22",
-                "user_email" => "johndoe22@example.com",
-                "modify_if_login_exists" => "1",
-                //"user_pass" => "456DkaIjsd!", // Optional. Plain text Password. If empty, this will be auto-generated.
-                "first_name" => "John",
-                "last_name" => "Doe",
-                "optimizemember_level" => "2",
-                "optimizemember_subscr_gateway" => "paypal",
-                "optimizemember_subscr_id" => "I-DJASODJF8933J",
-                //"custom_fields" => array ("my_field_id" => "Some value."), // Optional. An array of Custom Registration/Profile Field ID's, with associative values
-                "opt_in" => "1",
-                "notification" => "1",
+            $usr = $post['optimizemember_pro_stripe_checkout'];
+
+            $op['data'] = [
+                'user_login' => $usr['username'],
+                'user_email' => $usr['email'],
+                'modify_if_login_exists' => '1',
+                'first_name' => $usr['first_name'],
+                'last_name' => $usr['last_name'],
+                'optimizemember_level' => $post['level'],
+                'optimizemember_subscr_gateway' => 'stripe',
+                'optimizemember_subscr_id' => $post['plan'],
+                'opt_in' => '1',
+                'notification' => '1',
             ];
 
-            $post_data = stream_context_create (array ("http" => array ("method" => "POST", "header" => "Content-type: application/x-www-form-urlencoded", "content" => "optimizemember_pro_remote_op=" . urlencode (serialize ($op)))));
+            $post_data = stream_context_create ([
+               'http' => [
+                 'method' => 'POST',
+                 'header' => 'Content-type: application/x-www-form-urlencoded',
+                 'content' => 'optimizemember_pro_remote_op=' . urlencode (serialize ($op))
+               ]
+             ]);
 
-            $result = trim (file_get_contents (site_url() . "/?optimizemember_pro_remote_op=1", false, $post_data));
+            $result = trim (file_get_contents (site_url() . '/?optimizemember_pro_remote_op=1', false, $post_data));
 
             return $result;
         }
 
-        //Shortcode
+        //D shortcode
         function shortcodes($atts)
         {
           //define shortcode atts
@@ -237,9 +247,21 @@ if(!class_exists('OptimizeCustomize')) {
               self::TEXT_DOMAIN,
               'optimize_customize_section'
             );
-
             //form code - register
             register_setting(self::TEXT_DOMAIN, 'optimize_customize_setting_code');
+
+            //css field - for frontend
+            add_settings_field(
+              'optimize_customize_setting_css',
+
+              'CSS',
+              [$this, 'adminSettingsCss'],
+              self::TEXT_DOMAIN,
+              'optimize_customize_section'
+            );
+
+            //form code - register
+            register_setting(self::TEXT_DOMAIN, 'optimize_customize_setting_css');
         }
 
         //admin settings options section heading
@@ -261,7 +283,7 @@ if(!class_exists('OptimizeCustomize')) {
               id="optimize_customize_api_key"
               value="' . get_option('optimize_customize_setting_key') . '"><br/>
             <a href="' . admin_url() . '/admin.php?page=ws-plugin--optimizemember-scripting"
-              target="_blank">Get Optimize Remote API Key.</a><br/>
+              target="_blank">Get OptimizePress Memeber Remote API Key.</a><br/>
             <i>Scroll down to the "Pro API For Remote Operations" section and retrieve the value from the <br/>
             "Remote Operations API: Your secret API Key" textbox, paste that value in the textbox above.</i>';
         }
@@ -291,6 +313,26 @@ if(!class_exists('OptimizeCustomize')) {
             return get_option('optimize_customize_setting_code');
         }
 
+        //admin settings signup form field
+        public function adminSettingsCss()
+        {
+            print '
+            <textarea name="optimize_customize_setting_css" id="' .
+              self::TEXT_DOMAIN . '-css-editor">' .
+              self::getCss() .
+            '</textarea>';
+        }
+
+        //css -get setting option value, save out css to file
+        public static function getCss()
+        {
+            $css = get_option('optimize_customize_setting_css');
+
+            file_put_contents(__DIR__  . self::getFrontendScriptPath(), $css);
+
+            return $css;
+        }
+
         //Admin settings payment provider select options
         function adminSettingsPayments()
         {
@@ -309,11 +351,11 @@ if(!class_exists('OptimizeCustomize')) {
         //enqueue scripts for admin page
         function adminEnqueueScripts($hook)
         {
-          $url = plugins_url() . self::PLUGIN_DIR ;
+          $url = plugins_url() . self::PLUGIN_DIR;
 
           //codemirror css
           wp_enqueue_style(
-            self::TEXT_DOMAIN . '-cm-style',
+            self::TEXT_DOMAIN . '-codem-style',
             $url . '/assets/vendor/codemirror/css/codemirror.css',
             [],
             self::VERSION
@@ -363,6 +405,23 @@ if(!class_exists('OptimizeCustomize')) {
             self::VERSION,
             true
           );
+        }
+
+        //enqueue frontend custom css
+        function enqueueScripts()
+        {
+            $pd  = plugins_url() . self::PLUGIN_DIR;
+            wp_enqueue_style(
+              self::TEXT_DOMAIN . '-custom-style',
+              $pd . self::getFrontendScriptPath(),
+              [],
+              self::VERSION
+            );
+        }
+
+        function getFrontendScriptPath()
+        {
+            return '/assets/css/' . self::TEXT_DOMAIN . '-custom.css';
         }
     }
 
