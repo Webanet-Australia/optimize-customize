@@ -25,5 +25,6 @@ print '<script>var optimizeCustomizeAtts = ' . json_encode($atts) . '</script>';
 
       });
 
-  });
+    });
+    
 </script>

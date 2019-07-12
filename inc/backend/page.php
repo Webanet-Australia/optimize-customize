@@ -24,7 +24,7 @@
       <td>
         <b>[optimize_customize level="1" currency="USD" plan="Payment Provider's Plan Name"/]</b><br/>
           <i>Level is an OptimizePress Membership level, where Bronze is one, etc.</i><br/>
-          <i>Plan name, as setup on your payment gateways dashboard.</i><br/>
+          <i>Plan ID, as setup on your payment gateways dashboard.</i><br/>
       </td>
     </tr>
   </tbody>
@@ -39,5 +39,13 @@
       mode: "htmlmixed"
     });
     cm.setSize('100%', '260px');
+    var cmCss = CodeMirror.fromTextArea(document.getElementById("optimize-customize-css-editor"), {
+      lineNumbers: true,
+      lineWrapping: true,
+      styleActiveLine: true,
+      matchBrackets: true,
+      mode: "css"
+    });
+    cmCss.setSize('100%', '260px');
   });
 </script>
